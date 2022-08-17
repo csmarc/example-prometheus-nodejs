@@ -1,6 +1,8 @@
 'use strict'
 
+const path = require('path')
 const express = require('express')
+const favicon = require('serve-favicon')
 const Prometheus = require('prom-client')
 
 const app = express()
@@ -17,6 +19,8 @@ const httpRequestDurationMicroseconds = new Prometheus.Histogram({
   labelNames: ['method', 'route', 'code'],
   buckets: [0.10, 5, 15, 50, 100, 200, 300, 400, 500]  // buckets for response time from 0.1ms to 500ms
 })
+
+app.use(favicon(path.join(__dirname, 'favicon.png')))
 
 // Runs before each requests
 app.use((req, res, next) => {
