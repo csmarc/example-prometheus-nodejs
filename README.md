@@ -24,7 +24,7 @@ Modify: `/prometheus-data/prometheus.yml`, replace `192.168.0.10` with your own 
 Host machine IP address: `ifconfig | grep 'inet 192'| awk '{ print $2}'`
 
 ```sh
-docker run -p 9090:9090 -v "$(pwd)/prometheus-data":/prometheus-data prom/prometheus -config.file=/prometheus-data/prometheus.yml
+docker run -p 9090:9090 -v "$(pwd)/prometheus-data":/prometheus-data prom/prometheus --config.file=/prometheus-data/prometheus.yml
 ```
 
 Open Prometheus: [http://localhost:9090](http://localhost:9090/graph)
@@ -38,7 +38,7 @@ Open Prometheus: [http://localhost:9090](http://localhost:9090/graph)
 Range[0,1]: number of 5xx requests / total number of requests
 
 ```
-sum(increase(http_request_duration_ms_count{code=~"^5..$"}[1m])) /  sum(increase(http_request_duration_ms_count[1m]))
+sum(increase(http_request_duration_ms_count{code=~"^5..$"}[1m]))/sum(increase(http_request_duration_ms_count[1m]))
 ```
 
 ##### Request Per Minute
@@ -133,12 +133,14 @@ Password: admin
 ### Setting datasource
 
 Create a Grafana datasource with this settings:
-+ name: DS_PROMETHEUS
-+ type: prometheus
-+ url: http://localhost:9090
-+ access: direct
+
+- name: DS_PROMETHEUS
+- type: prometheus
+- url: http://localhost:9090
+- access: direct
 
 Or use this curl request:
+
 ```sh
 curl 'http://admin:admin@localhost:3000/api/datasources' -H 'Content-Type: application/json;charset=UTF-8' -H 'Accept: application/json, text/plain, */*' --data-binary '{"name":"DS_PROMETHEUS","type":"prometheus","url":"http://localhost:9090","access":"direct","jsonData":{"keepCookies":[]},"secureJsonFields":{}}' --compressed
 ```
@@ -148,6 +150,7 @@ curl 'http://admin:admin@localhost:3000/api/datasources' -H 'Content-Type: appli
 Grafana Dashboard to import: [/grafana-dashboard.json](/grafana-dashboard.json)
 
 Or use this curl request:
+
 ```sh
 curl 'http://admin:admin@localhost:3000/api/dashboards/import' -H 'Accept-Encoding: gzip, deflate' -H 'Content-Type: application/json;charset=UTF-8' -H 'Accept: application/json, text/plain, */*' --data-binary '%{copy and paste grafana-dashboard.json}' --compressed
 ```
